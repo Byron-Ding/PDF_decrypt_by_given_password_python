@@ -26,16 +26,16 @@ def decrypt_pdfs(common_password: str,
 
             if os.path.isfile(each_pdf_path):
                 if os.path.splitext(each_pdf_path)[-1].lower() == '.pdf':
-                    # Create a PdfFileWriter object
-                    writer = PyPDF2.PdfFileWriter()
+                    # Create a PdfWriter object
+                    writer = PyPDF2.PdfWriter()
 
                     # Open encrypted PDF reader with the PdfFileReader
-                    reader = PyPDF2.PdfFileReader(each_pdf_path, strict=False)
+                    reader = PyPDF2.PdfReader(each_pdf_path, strict=False)
 
                     # Store correct password in a variable password.
 
                     # Check if the opened reader is actually Encrypted
-                    if reader.isEncrypted:
+                    if reader.is_encrypted:
 
                         # If encrypted, decrypt it with the password
                         reader.decrypt(common_password)
@@ -43,12 +43,12 @@ def decrypt_pdfs(common_password: str,
                         # Now, the reader has been unlocked.
                         # Iterate through every page of the reader
                         # and add it to our new reader.
-                        for idx in range(reader.numPages):
+                        for idx in range(len(reader.pages)):
                             # Get the page at index idx
-                            page = reader.getPage(idx)
+                            page = reader.pages[idx]
 
                             # Add it to the output reader
-                            writer.addPage(page)
+                            writer.add_page(page)
 
                         with open(output_path, "wb"):
                             # Open a new reader "decrypted.pdf"
@@ -58,8 +58,7 @@ def decrypt_pdfs(common_password: str,
                         print("File decrypted Successfully.")
                     else:
                         # If reader is not encrypted, print the
-                        # message
-                        print("File already decrypted.")
+                        # message                        print("File already decrypted.")
                         if whether_copy_if_decrypted:
                             shutil.copyfile(each_pdf_path, output_path)
 
